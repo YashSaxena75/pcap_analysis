@@ -1,8 +1,8 @@
 # How to Use
 
 ```
-   1) Set file permission , chmod 777 arp.py
-  
+   1) Set file permission , chmod 777 analysis_pcap_arp
+   
    2) ./analysis_pcap_arp --pcap [pcap_file]   # Print detailed information
    
    3) ./analysis_pcap_arp --min [pcap_file]  # Print less information
