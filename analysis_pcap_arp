@@ -1,0 +1,170 @@
+#!/usr/bin/python3
+
+# import necessary packages
+
+import optparse
+import os
+from time import sleep
+import sys
+from scapy.all import *
+from colorama import Fore , Style
+
+
+#function to process less information
+
+def pcap_min(f_name):
+
+    arpp = 0
+    req  = 0
+    previp = []
+    prevop = []
+    prevsrc =  []
+
+    print()
+    print('Analaysing ' + f_name )
+
+    for (pkt_data , pkt_metadata ) in RawPcapReader(f_name):
+        pkt = Ether(pkt_data)
+        arp = ARP(pkt_data)
+
+        try:
+
+            if pkt.type == 2054:   # check if packet type is ARP or not
+                arpp += 1
+                previp.append(pkt.pdst)
+                prevop.append(pkt.op)
+                prevsrc.append(pkt.psrc)
+
+                if arpp >= 2 and previp[arpp-2] == pkt.pdst and pkt.op==1 and pkt.op==prevop[arpp-2] and pkt.psrc==prevsrc[arpp-2]:
+                    req += 1
+
+                elif previp[arpp-2]!=pkt.pdst and pkt.op == 1:
+                    req = 0
+                    
+
+                elif prevsrc[arpp-2]!=pkt.psrc and pkt.op == 1:
+                    req = 0
+
+                elif previp[arpp-2]!=pkt.pdst and pkt.op == 2:
+                    req = 0
+
+                print()
+                if req<1 and pkt.op == 1:
+                    #disp lay the packet only if request / response was successful
+                    print(Fore.BLUE)
+                    print("Source IP : " , pkt.psrc , "\n")
+                    print("Destination IP : " , pkt.pdst , "\n")
+                    print("Source MAC : ",pkt.hwsrc,"\n")
+                    print("Destination MAC : ",pkt.hwdst,"\n")
+                    print(Style.RESET_ALL)
+
+                elif req<1 and pkt.op == 2:
+                    print(Fore.GREEN)
+                    print("Source IP : " , pkt.psrc , "\n")
+                    print("Destination IP : " , pkt.pdst , "\n")
+                    print("Source MAC : " , pkt.hwsrc , "\n")
+                    print(Style.RESET_ALL)
+                    print("_______________________________________________________")
+
+                else:
+                    print(Fore.RED)
+                    print(pkt.pdst,"didn't replied back")
+                    print(Style.RESET_ALL)
+
+        except Exception as e:
+            continue
+    print("\n\n Processed total {} ARP packets".format(arpp))
+
+# function to process detailed information
+
+def pcap_analyses(file_name):
+
+    arpp = 0
+    req  = 0
+    previp  =  []
+    prevop  =  []
+    prevsrc =  []
+
+    print()
+    print('Analaysing ' + file_name )
+
+    for (pkt_data , pkt_metadata ) in RawPcapReader(file_name):
+        pkt = Ether(pkt_data)
+        arp = ARP(pkt_data)
+
+        try:
+
+            if pkt.type == 2054:   # check if packet type is ARP or not
+                arpp += 1
+                previp.append(pkt.pdst)
+                prevop.append(pkt.op)
+                prevsrc.append(pkt.psrc)
+
+                if arpp >= 2 and previp[arpp-2] == pkt.pdst and pkt.op==1 and pkt.op==prevop[arpp-2] and pkt.psrc==prevsrc[arpp-2]:
+                    req += 1
+
+                elif previp[arpp-2]!=pkt.pdst and pkt.op == 1:
+                    req = 0
+                    
+                
+                elif prevsrc[arpp-2]!=pkt.psrc and pkt.op == 1:
+                    req = 0
+
+                elif previp[arpp-2]!=pkt.pdst and pkt.op == 2:
+                    req = 0
+
+                print()
+                if req<1 and pkt.op==1:
+
+                    print(Fore.BLUE)
+                    #display the packet only if request / response was successful
+                    print(pkt.show())
+                    print(Style.RESET_ALL)
+
+                elif req<1 and pkt.op==2:
+                    print(Fore.GREEN)
+                    #display the packet only if request / response was successful
+                    print(pkt.show())
+                    print(Style.RESET_ALL)
+                    print("_______________________________________________________")
+
+                else:
+                    print(Fore.RED)
+                    print(pkt.pdst,"didn't replied back")
+                    print(Style.RESET_ALL)
+
+        except Exception as e:
+            continue
+
+    print("\n\n Processed total {} ARP packets".format(arpp))
+
+# main code
+
+if __name__ == '__main__':
+
+    parser = optparse.OptionParser()
+    parser.add_option("--pcap", dest="file_name", help="[pcap-file-name]")
+    parser.add_option("--min" ,dest="f_name" ,help="[pcap-file-name]")
+    (options,arguments)=parser.parse_args()
+
+    if not options.file_name and not options.f_name:
+        parser.error("[-] missing argument")
+
+    else:
+        if options.file_name:
+
+            if os.path.isfile(options.file_name):
+                pcap_analyses(options.file_name)
+
+            else:
+                print("\nFile doesn't exist\n")
+
+        elif options.f_name:
+
+            if os.path.isfile(options.f_name):
+                pcap_min(options.f_name)
+
+            else:
+                print("\nFile doesn't exist\n")
+
+    sys.exit(0)
