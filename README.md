@@ -13,7 +13,7 @@
 
 ```
   Reading the pcap file using scapy RawPcapReader , check if packet is ARP request / Response , 
-  if yes then print ARP request and response and count the numbers of
+  if yes then print ARP request and response and count the number of
   packets . script will also check if a destination IP failed to reply back
   
 ```
@@ -23,7 +23,7 @@
 ``` 
   Request Packet     : Blue Color
   
-  Respomse Packet    : Green Color
+  Response Packet    : Green Color
   
   Error with Packet  : Red Color
   
