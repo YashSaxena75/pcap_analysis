@@ -40,7 +40,7 @@ To find Router's MAC Adress check source MAC address in ARP Part
 
 
 ``` 
-  Request Packet     : Blue Color
+  Request Packet     : White Color
   
   Response Packet    : Green Color
   
