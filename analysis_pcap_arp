@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 # import necessary packages
 
 import optparse
@@ -22,47 +20,44 @@ def pcap_min(f_name):
     print()
     print('Analaysing ' + f_name )
 
-    for (pkt_data , pkt_metadata ) in RawPcapReader(f_name):
-        pkt = Ether(pkt_data)
-        arp = ARP(pkt_data)
-       
+
+    pkts_data = rdpcap(f_name)
+    for i in range(0,len(pkts_data)):
         try:
-
-            if pkt.type == 2054:   # check if packet type is ARP or not
+            if pkts_data[i]['Ethernet'].type==0x0806: # Process only if it is an ARP packet
                 arpp += 1
-                previp.append(pkt.pdst)
-                prevop.append(pkt.op)
-                prevsrc.append(pkt.psrc)
+                previp.append(pkts_data[i]['ARP'].pdst)
+                prevop.append(pkts_data[i]['ARP'].op)
+                prevsrc.append(pkts_data[i]['ARP'].psrc)
 
-                if arpp >= 2 and previp[arpp-2] == pkt.pdst and pkt.op==1 and pkt.op==prevop[arpp-2] and pkt.psrc==prevsrc[arpp-2]:
+                if arpp >= 2 and previp[arpp-2] == pkts_data[i]['ARP'].pdst and pkts_data[i]['ARP'].op==1 and pkts_data[i]['ARP'].op==prevop[arpp-2] and pkts_data[i]['ARP'].psrc==prevsrc[arpp-2]:
                     req += 1
 
-                elif previp[arpp-2]!=pkt.pdst and pkt.op == 1:
+                elif previp[arpp-2]!=pkts_data[i]['ARP'].pdst and pkts_data[i]['ARP'].op == 1:
                     req = 0
                     
 
-                elif prevsrc[arpp-2]!=pkt.psrc and pkt.op == 1:
+                elif prevsrc[arpp-2]!=pkts_data[i]['ARP'].psrc and pkts_data[i]['ARP'].op == 1:
                     req = 0
 
-                elif previp[arpp-2]!=pkt.pdst and pkt.op == 2:
+                elif previp[arpp-2]!=pkts_data[i]['ARP'].pdst and pkts_data[i]['ARP'].op == 2:
                     req = 0
 
-                print()
-                if req<1 and pkt.op == 1:
+                if req<1 and pkts_data[i]['ARP'].op == 1:
                     #display the packet only if request / response was successful
                     print(Fore.WHITE)
-                    print("Ethernet MAC : " , pkt.dst , "\n")
-                    print("Source IP : " , pkt.psrc , "\n")
-                    print("Destination IP : " , pkt.pdst , "\n")
-                    print("Source MAC : ",pkt.hwsrc,"\n")
-                    print("Destination MAC : ",pkt.hwdst,"\n")
+                    print("Ethernet MAC : " , pkts_data[i]['Ethernet'].dst , "\n")
+                    print("Source IP : " , pkts_data[i]['ARP'].psrc , "\n")
+                    print("Destination IP : " , pkts_data[i]['ARP'].pdst , "\n")
+                    print("Source MAC : ",pkts_data[i]['ARP'].hwsrc,"\n")
+                    print("Destination MAC : ",pkts_data[i]['ARP'].hwdst,"\n")
                     print(Style.RESET_ALL)
 
-                elif req<1 and pkt.op == 2:
+                elif req<1 and pkts_data[i]['ARP'].op == 2:
                     print(Fore.GREEN)
-                    print("Source IP : " , pkt.psrc , "\n")
-                    print("Destination IP : " , pkt.pdst , "\n")
-                    print("Source MAC : " , pkt.hwsrc , "\n")
+                    print("Source IP : " , pkts_data[i]['ARP'].psrc , "\n")
+                    print("Destination IP : " , pkts_data[i]['ARP'].pdst , "\n")
+                    print("Source MAC : " , pkts_data[i]['ARP'].hwsrc , "\n")
                     print(Style.RESET_ALL)
                     print("_______________________________________________________")
 
@@ -73,7 +68,8 @@ def pcap_min(f_name):
 
         except Exception as e:
             continue
-    print("\n\n Processed total {} ARP packets".format(arpp))
+    print("\n\nProcessed total {} ARP packets".format(arpp))
+
 
 # function to process detailed information
 
@@ -81,56 +77,56 @@ def pcap_analyses(file_name):
 
     arpp = 0
     req  = 0
-    previp  =  []
-    prevop  =  []
+    previp = []
+    prevop = []
     prevsrc =  []
 
     print()
     print('Analaysing ' + file_name )
 
-    for (pkt_data , pkt_metadata ) in RawPcapReader(file_name):
-        pkt = Ether(pkt_data)
-        arp = ARP(pkt_data)
 
+    pkts_data = rdpcap(file_name)
+    for i in range(0,len(pkts_data)):
         try:
-
-            if pkt.type == 2054:   # check if packet type is ARP or not
+            if pkts_data[i]['Ethernet'].type==0x0806: # Process only if it is an ARP packet
                 arpp += 1
-                previp.append(pkt.pdst)
-                prevop.append(pkt.op)
-                prevsrc.append(pkt.psrc)
+                previp.append(pkts_data[i]['ARP'].pdst)
+                prevop.append(pkts_data[i]['ARP'].op)
+                prevsrc.append(pkts_data[i]['ARP'].psrc)
 
-                if arpp >= 2 and previp[arpp-2] == pkt.pdst and pkt.op==1 and pkt.op==prevop[arpp-2] and pkt.psrc==prevsrc[arpp-2]:
+                if arpp >= 2 and previp[arpp-2] == pkts_data[i]['ARP'].pdst and pkts_data[i]['ARP'].op==1 and pkts_data[i]['ARP'].op==prevop[arpp-2] and pkts_data[i]['ARP'].psrc==prevsrc[arpp-2]:
                     req += 1
 
-                elif previp[arpp-2]!=pkt.pdst and pkt.op == 1:
+                elif previp[arpp-2]!=pkts_data[i]['ARP'].pdst and pkts_data[i]['ARP'].op == 1:
                     req = 0
                     
-                
-                elif prevsrc[arpp-2]!=pkt.psrc and pkt.op == 1:
+
+                elif prevsrc[arpp-2]!=pkts_data[i]['ARP'].psrc and pkts_data[i]['ARP'].op == 1:
                     req = 0
 
-                elif previp[arpp-2]!=pkt.pdst and pkt.op == 2:
+                elif previp[arpp-2]!=pkts_data[i]['ARP'].pdst and pkts_data[i]['ARP'].op == 2:
                     req = 0
 
                 print()
-                if req<1 and pkt.op==1:
+
+                if req<1 and pkts_data[i]['ARP'].op == 1:
 
                     print(Fore.WHITE)
+                    print("request")
                     #display the packet only if request / response was successful
-                    print(pkt.show())
+                    print(pkts_data[i].show())
                     print(Style.RESET_ALL)
 
-                elif req<1 and pkt.op==2:
+                elif req<1 and pkts_data[i]['ARP'].op == 2:
                     print(Fore.GREEN)
                     #display the packet only if request / response was successful
-                    print(pkt.show())
+                    print(pkts_data[i].show())
                     print(Style.RESET_ALL)
                     print("_______________________________________________________")
 
                 else:
                     print(Fore.RED)
-                    print(pkt.pdst,"didn't replied back")
+                    print(pkts_data[i]['ARP'].pdst,"didn't replied back")
                     print(Style.RESET_ALL)
 
         except Exception as e:
