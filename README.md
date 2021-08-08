@@ -26,7 +26,7 @@ open Ethernet part , check destination , it will be FF:FF:FF:FF:FF:FF ( Broadcas
 check destination IP in ARP part , it will be your default gateway / router's IP address
 
 
-![router_ip](https://user-images.githubusercontent.com/35332582/128627688-3f63d1d9-6b64-48f3-969b-1a99444e0a70.png)
+<img src='https://user-images.githubusercontent.com/35332582/128627688-3f63d1d9-6b64-48f3-969b-1a99444e0a70.png'>
 
 
 check the ARP response packet
