@@ -24,15 +24,16 @@
 check the ARP request packet
 open Ethernet part , check destination , it will be FF:FF:FF:FF:FF:FF ( Broadcast )
 check destination IP in ARP part , it will be your default gateway / router's IP address
+```
 
-https://user-images.githubusercontent.com/35332582/128627688-3f63d1d9-6b64-48f3-969b-1a99444e0a70.png
-
-check the ARP response packet
-To find Router's MAC Adress check source MAC address in ARP Part
-
-https://user-images.githubusercontent.com/35332582/128627726-4b4684ea-2fe1-49ba-8493-19cfe9ffeb0f.png
+![ip_route](https://user-images.githubusercontent.com/35332582/128627688-3f63d1d9-6b64-48f3-969b-1a99444e0a70.png)
 
 ```
+check the ARP response packet
+To find Router's MAC Adress check source MAC address in ARP Part
+```
+![mac_route](https://user-images.githubusercontent.com/35332582/128627726-4b4684ea-2fe1-49ba-8493-19cfe9ffeb0f.png)
+
 
 
 # Note
