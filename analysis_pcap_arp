@@ -9,7 +9,6 @@ import sys
 from scapy.all import *
 from colorama import Fore , Style
 
-
 #function to process less information
 
 def pcap_min(f_name):
@@ -26,7 +25,7 @@ def pcap_min(f_name):
     for (pkt_data , pkt_metadata ) in RawPcapReader(f_name):
         pkt = Ether(pkt_data)
         arp = ARP(pkt_data)
-
+       
         try:
 
             if pkt.type == 2054:   # check if packet type is ARP or not
@@ -50,8 +49,9 @@ def pcap_min(f_name):
 
                 print()
                 if req<1 and pkt.op == 1:
-                    #disp lay the packet only if request / response was successful
-                    print(Fore.BLUE)
+                    #display the packet only if request / response was successful
+                    print(Fore.WHITE)
+                    print("Ethernet MAC : " , pkt.dst , "\n")
                     print("Source IP : " , pkt.psrc , "\n")
                     print("Destination IP : " , pkt.pdst , "\n")
                     print("Source MAC : ",pkt.hwsrc,"\n")
@@ -116,7 +116,7 @@ def pcap_analyses(file_name):
                 print()
                 if req<1 and pkt.op==1:
 
-                    print(Fore.BLUE)
+                    print(Fore.WHITE)
                     #display the packet only if request / response was successful
                     print(pkt.show())
                     print(Style.RESET_ALL)
