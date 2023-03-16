@@ -7,6 +7,8 @@ import sys
 from scapy.all import *
 from colorama import Fore , Style
 
+
+os.system("id")
 #function to process less information
 
 def pcap_min(f_name):
